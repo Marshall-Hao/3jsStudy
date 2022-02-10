@@ -4,4 +4,5 @@
 // import light from "./light";
 // import shadow from "./shadow";
 // import hauntedHouse from "./hauntedHouse";
-import particles from "./particle";
+// import particles from "./particle";
+import galaxy from "./galaxy";
