@@ -2,4 +2,5 @@
 // import materials from "./materials";
 // import text from "./text3D";
 // import light from "./light";
-import shadow from "./shadow";
+// import shadow from "./shadow";
+import hauntedHouse from "./hauntedHouse";
