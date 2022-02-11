@@ -5,4 +5,5 @@
 // import shadow from "./shadow";
 // import hauntedHouse from "./hauntedHouse";
 // import particles from "./particle";
-import galaxy from "./galaxy";
+// import galaxy from "./galaxy";
+import rayCaster from "./rayCaster";
