@@ -7,4 +7,5 @@
 // import particles from "./particle";
 // import galaxy from "./galaxy";
 // import rayCaster from "./rayCaster";
-import physics from "./physic";
+// import physics from "./physic";
+import model from "./modelImport";
