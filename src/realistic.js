@@ -2,13 +2,25 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "lil-gui";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+
+/**
+ * Loaders
+ */
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("/draco/");
+
+const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(dracoLoader);
+const cubeTextureLoader = new THREE.CubeTextureLoader();
 
 /**
  * Base
  */
 // Debug
 const gui = new dat.GUI();
-
+const debugObject = {};
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
 
@@ -16,22 +28,88 @@ const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
 
 /**
+ * Update all materials
+ */
+const updateAllMaterials = () => {
+  // * goes every child of the scene and every child of the child
+  scene.traverse((child) => {
+    if (
+      child instanceof THREE.Mesh &&
+      child.material instanceof THREE.MeshStandardMaterial
+    ) {
+      //   child.material.envMap = environmentMap;
+      child.material.envMapIntensity =
+        debugObject.envMapIntensity;
+      // * enable material update
+      child.material.needsUpdate = true;
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
+  });
+};
+
+/**
  * Test sphere
  */
-const testSphere = new THREE.Mesh(
-  new THREE.SphereGeometry(1, 32, 32),
-  new THREE.MeshStandardMaterial()
-);
-scene.add(testSphere);
+// const testSphere = new THREE.Mesh(
+//   new THREE.SphereGeometry(1, 32, 32),
+//   new THREE.MeshStandardMaterial()
+// );
+// scene.add(testSphere);
+
+/**
+ * Environment map
+ */
+const environmentMap = cubeTextureLoader.load([
+  "/textures/environmentMaps/0/px.jpg",
+  "/textures/environmentMaps/0/nx.jpg",
+  "/textures/environmentMaps/0/py.jpg",
+  "/textures/environmentMaps/0/ny.jpg",
+  "/textures/environmentMaps/0/pz.jpg",
+  "/textures/environmentMaps/0/nz.jpg",
+]);
+// * optimization
+environmentMap.encoding = THREE.sRGBEncoding;
+
+scene.background = environmentMap;
+// * add the envMap to all material
+scene.environment = environmentMap;
+debugObject.envMapIntensity = 5;
+gui
+  .add(debugObject, "envMapIntensity")
+  .min(0)
+  .max(10)
+  .step(0.001)
+  .onChange(updateAllMaterials);
+/**
+ * Models
+ */
+gltfLoader.load("/models/hamburger.glb", (gltf) => {
+  //   gltf.scene.scale.set(10, 10, 10);
+  gltf.scene.position.set(0, -4, 0);
+  gltf.scene.rotation.y = Math.PI * 0.5;
+  scene.add(gltf.scene);
+
+  gui
+    .add(gltf.scene.rotation, "y")
+    .min(-Math.PI)
+    .max(Math.PI)
+    .step(0.001)
+    .name("rotation");
+  updateAllMaterials();
+});
 
 /**
  * Lights
  */
 const directionalLight = new THREE.DirectionalLight(
   "#ffffff",
-  1
+  3
 );
 directionalLight.position.set(0.25, 3, -2.25);
+directionalLight.castShadow = true;
+// * 消除表面的 自身锯齿投影
+directionalLight.shadow.normalBias = 0.05;
 scene.add(directionalLight);
 
 gui
@@ -58,6 +136,14 @@ gui
   .max(5)
   .step(0.001)
   .name("lightZ");
+
+// * shadow helper
+const directionalLightCameraHelper = new THREE.CameraHelper(
+  directionalLight.shadow.camera
+);
+directionalLight.shadow.mapSize.set(1024, 1024);
+scene.add(directionalLightCameraHelper);
+
 /**
  * Sizes
  */
@@ -104,12 +190,42 @@ controls.enableDamping = true;
  */
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
+  //  * 消除锯齿
+  antialias: true,
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(
   Math.min(window.devicePixelRatio, 2)
 );
+// * more physical world light effect
+renderer.physicallyCorrectLights = true;
+// * output encode, encode all the effect
+renderer.outputEncoding = THREE.sRGBEncoding;
+//  * tone mapping, mapping the high value into the limitations
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 3;
+// * enable shadow
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+gui
+  .add(renderer, "toneMapping", {
+    No: THREE.NoToneMapping,
+    Linear: THREE.LinearToneMapping,
+    Reinhard: THREE.ReinhardToneMapping,
+    Cineon: THREE.CineonToneMapping,
+    ACESFilmic: THREE.ACESFilmicToneMapping,
+  })
+  .onFinishChange(() => {
+    renderer.toneMapping = Number(renderer.toneMapping);
+    updateAllMaterials();
+  });
+
+gui
+  .add(renderer, "toneMappingExposure")
+  .min(0)
+  .max(10)
+  .step(0.001);
 /**
  * Animate
  */
