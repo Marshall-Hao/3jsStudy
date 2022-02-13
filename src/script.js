@@ -8,4 +8,6 @@
 // import galaxy from "./galaxy";
 // import rayCaster from "./rayCaster";
 // import physics from "./physic";
-import model from "./modelImport";
+// import model from "./modelImport";
+// import blender from "./blenderImport";
+import real from "./realistic";
