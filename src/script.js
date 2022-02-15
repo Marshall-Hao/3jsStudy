@@ -11,4 +11,5 @@
 // import model from "./modelImport";
 // import blender from "./blenderImport";
 // import real from "./realistic";
-import shaders from "./shaders";
+// import shaders from "./shaders";
+import pattern from "./shaderPattern";
