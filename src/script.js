@@ -14,4 +14,5 @@
 // import shaders from "./shaders";
 // import pattern from "./shaderPattern";
 // import post from "./post";
-import load from "./loading";
+// import load from "./loading";
+import mixed from "./mixed";
