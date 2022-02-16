@@ -13,4 +13,5 @@
 // import real from "./realistic";
 // import shaders from "./shaders";
 // import pattern from "./shaderPattern";
-import post from "./post";
+// import post from "./post";
+import load from "./loading";
