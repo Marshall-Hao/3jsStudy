@@ -2,11 +2,33 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-
+import { gsap } from "gsap";
 /**
  * Loaders
  */
-const gltfLoader = new GLTFLoader();
+const loadingBarElement =
+  document.querySelector(".loading-bar");
+const loadManager = new THREE.LoadingManager(
+  // Loaded
+  () => {
+    window.setTimeout(() => {
+      gsap.to(overlayMaterial.uniforms.uAlpha, {
+        duration: 3,
+        value: 0,
+        delay: 1,
+      });
+
+      loadingBarElement.classList.add("ended");
+      loadingBarElement.style.transform = "";
+    }, 500);
+  },
+  // Progress
+  (itemUrl, itemsLoaded, itemsTotal) => {
+    const progressRatio = itemsLoaded / itemsTotal;
+    loadingBarElement.style.transform = `scaleX(${progressRatio})`;
+  }
+);
+const gltfLoader = new GLTFLoader(loadManager);
 const cubeTextureLoader = new THREE.CubeTextureLoader();
 
 /**
