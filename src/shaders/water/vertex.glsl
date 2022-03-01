@@ -100,20 +100,23 @@ void main() {
    
    vec4 modelPosition = modelMatrix * vec4(position, 1.0);
 
-    //  Elevation
+     // Elevation
    float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime * uBigWaveSpeed) * 
-                     sin(modelPosition.z * uBigWavesFrequency.y + uTime * uBigWaveSpeed) * 
+                     sin(modelPosition.y * uBigWavesFrequency.y + uTime * uBigWaveSpeed) * 
                      uBigWavesElevation;
+    // float elevation =  sin(0.8);
     for(float i = 1.0; i <= uSmallIterations; i++) {
-        elevation -= abs(cnoise(vec3(modelPosition.xz * i * uSmallWavesFrequency, uTime*uSmallWavesSpeed)) *  uSmallWavesElevation / i);
+        elevation -= abs(cnoise(vec3(modelPosition.xy * i * uSmallWavesFrequency, uTime*uSmallWavesSpeed)) *  uSmallWavesElevation / i);
     }
 
-   modelPosition.y += elevation; 
+   modelPosition.z += elevation;
+    modelPosition.x +=elevation;
+    modelPosition.y +=elevation;
 
    vec4 viewPosition = viewMatrix * modelPosition;
    vec4 projectedMatrix = projectionMatrix * viewPosition;
 
    gl_Position = projectedMatrix;
 
-   vElevation = elevation;
+    vElevation = elevation;
 }

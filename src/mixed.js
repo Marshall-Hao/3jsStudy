@@ -111,14 +111,17 @@ const updateAllMaterials = () => {
  * Environment map
  */
 const environmentMap = cubeTextureLoader.load([
-  "/textures/environmentMaps/0/px.jpg",
-  "/textures/environmentMaps/0/nx.jpg",
-  "/textures/environmentMaps/0/py.jpg",
-  "/textures/environmentMaps/0/ny.jpg",
-  "/textures/environmentMaps/0/pz.jpg",
-  "/textures/environmentMaps/0/nz.jpg",
+  "/textures/environmentMaps/10/px.png",
+  "/textures/environmentMaps/10/nx.png",
+  "/textures/environmentMaps/10/py.png",
+  "/textures/environmentMaps/10/ny.png",
+  "/textures/environmentMaps/10/pz.png",
+  "/textures/environmentMaps/10/nz.png",
 ]);
 
+environmentMap.generateMipmaps = false;
+environmentMap.minFilter = THREE.NearestFilter;
+// environmentMap.magFilter = THREE.NearestFilter;
 environmentMap.encoding = THREE.sRGBEncoding;
 
 scene.background = environmentMap;

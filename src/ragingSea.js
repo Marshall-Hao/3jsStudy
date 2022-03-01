@@ -27,6 +27,13 @@ const waterGeometry = new THREE.PlaneGeometry(
   512
 );
 
+const ballGeometry = new THREE.SphereBufferGeometry(
+  0.5,
+  512,
+  512
+);
+
+console.log(ballGeometry.attributes.position.count);
 // Color
 debugObject.depthColor = "#186691";
 debugObject.surfaceColor = "#9bd8ff";
@@ -127,7 +134,7 @@ gui
   .step(1)
   .name("uSmallIterations");
 // Mesh
-const water = new THREE.Mesh(waterGeometry, waterMaterial);
+const water = new THREE.Mesh(ballGeometry, waterMaterial);
 water.rotation.x = -Math.PI * 0.5;
 scene.add(water);
 
